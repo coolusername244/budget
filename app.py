@@ -1,9 +1,9 @@
 import forms
 
+from flask import Flask, render_template, redirect, request, flash, url_for
 from email.policy import default
 from enum import unique
 from crypt import methods
-from flask import Flask, render_template, redirect, request, flash, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -74,3 +74,15 @@ def register():
         return redirect("/")
 
     return render_template("register.html", form=form)
+
+
+# route for invalid URL
+@app.errorhandler(404)
+def error_404(error):
+    return render_template("404.html"), 404
+
+
+# route for internal server error
+@app.route(500)
+def error_500():
+    return render_template("500.html"), 500
