@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block title %}
+Register
+{% endblock %}
+{% block body %}
+
+<form action="/register" method="post" class="text-center py-5">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        {{ form.username(class="form-control mx-auto w-auto", placeholder="Username") }}
+    </div>
+    <div class="mb-3">
+        {{ form.password(class="form-control mx-auto w-auto", placeholder="Password") }}
+    </div>
+    <div class="mb-3">
+        {{ form.confirm(class="form-control mx-auto w-auto", placeholder="Confirm Password") }}
+        {% if form.confirm.errors %}
+            {% for error in form.confirm.errors %}
+                {{ error }}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="mb-3">
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+    <p>Already have an account? <a href="/login">Log in here</a>!</p>
+</form>
+
+{% endblock %}
