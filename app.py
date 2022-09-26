@@ -54,7 +54,7 @@ def register():
     form = forms.RegistrationForm()
 
     if form.validate_on_submit():
-        # check for duplicate usernames. should return None 
+        # check for duplicate usernames
         user = Users.query.filter_by(username=form.username.data).first()
         if user is None:
             password_hash = generate_password_hash(form.password.data, method='sha256')
@@ -72,17 +72,4 @@ def register():
         form.confirm.data = ''
         flash(f"{username} has been registered succesfully!")
         return redirect("/")
-
     return render_template("register.html", form=form)
-
-
-# route for invalid URL
-@app.errorhandler(404)
-def error_404(error):
-    return render_template("404.html"), 404
-
-
-# route for internal server error
-@app.route(500)
-def error_500():
-    return render_template("500.html"), 500
