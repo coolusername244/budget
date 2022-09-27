@@ -7,6 +7,7 @@ from crypt import methods
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 
 
 
@@ -20,11 +21,19 @@ app.config.from_pyfile("config.py")
 db = SQLAlchemy(app)
 
 # create user model for database
-class Users(db.Model):
+class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String(200), nullable=False)
     data_added = db.Column(db.DateTime, default=datetime.utcnow)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(int(user_id))
 
 
 
@@ -45,9 +54,24 @@ def login():
     form = forms.LoginForm()
 
     if form.validate_on_submit():
-        return redirect("/")
-
+        user = Users.query.filter_by(username=form.username.data).first()
+        if user:
+            if check_password_hash(user.password, form.password.data):
+                login_user(user)
+                flash(f"Hello {user.username}")
+                return redirect("/")
+            else:
+                flash("Incorrect username and/or password")
+        else:
+            flash("Username does not exist")
     return render_template("login.html", form=form)
+
+@app.route('/logout', methods=["GET", "POST"])
+@login_required
+def logout():
+    logout_user()
+    flash("See you next time!")
+    return redirect("/login")
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -63,13 +87,11 @@ def register():
                 password=password_hash)
             db.session.add(user)
             db.session.commit()
+
         else:
             flash("Username already exists")
             return render_template("register.html", form=form)
-        username = form.username.data
-        form.username.data = ''
-        form.password.data = ''
-        form.confirm.data = ''
-        flash(f"{username} has been registered succesfully!")
+        login_user(user)
+        flash(f"{user.username} has been registered succesfully!")
         return redirect("/")
     return render_template("register.html", form=form)

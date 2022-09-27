@@ -4,6 +4,7 @@
         <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
+            {% if current_user.is_authenticated %}
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="/">Dashboard</a>
@@ -17,9 +18,10 @@
             </ul>
             <ul class="navbar-nav ms-auto mt-2">
                 <li class="nav-item">
-                    <a href="#" class="nav-link">Log Out</a>
+                    <a href="/logout" class="nav-link">Log Out</a>
                 </li>
             </ul>
+            {% else %}
             <ul class="navbar-nav ms-auto mt-2">
                 <li class="nav-item">
                     <a href="/login" class="nav-link">Log In</a>
@@ -27,6 +29,7 @@
                     <a href="/register" class="nav-link">Register</a>
                 </li>
             </ul>
+            {% endif %}
         </div>
     </div>
 </nav>
