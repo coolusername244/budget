@@ -1,9 +1,6 @@
 import forms
 
 from flask import Flask, render_template, redirect, request, flash, url_for
-from email.policy import default
-from enum import unique
-from crypt import methods
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -41,17 +38,53 @@ def load_user(user_id):
 def index():
     return render_template("index.html")
 
+
 @app.route("/dashboard")
 def dashboard():
     return render_template("dashboard.html")
+
 
 @app.route("/assets")
 def assets():
     return render_template("assets.html")
 
-@app.route("/liabilities")
+
+@app.route("/liabilities", methods=["GET", "POST"])
 def liabilities():
-    return render_template("liabilities.html")
+
+    frequency = [
+        "Every Month",
+        "Every 3 Months",
+        "Every Week",
+        "Every 2 Weeks"
+    ]
+
+    expenses = [
+        "Mortgage/Rent",
+        "Electricity",
+        "Internet",
+        "Other Utilities",
+        "Car Payment",
+        "Fuel",
+        "Parking",
+        "Insurance",
+        "Car Tax",
+        "Credit Card 1",
+        "Credit Card 2",
+        "Loan 1",
+        "Loan 2",
+        "Student Loan",
+        "Netflix",
+        "Spotify",
+        "Gym"
+    ]
+
+    return render_template(
+        "liabilities.html", 
+        expenses=expenses,
+        frequency=frequency
+        )
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -63,12 +96,13 @@ def login():
             if check_password_hash(user.password, form.password.data):
                 login_user(user)
                 flash(f"Hello {user.username}")
-                return redirect("/")
+                return redirect("/dashboard")
             else:
                 flash("Incorrect username and/or password")
         else:
             flash("Username does not exist")
     return render_template("login.html", form=form)
+
 
 @app.route('/logout', methods=["GET", "POST"])
 @login_required
@@ -76,6 +110,7 @@ def logout():
     logout_user()
     flash("See you next time!")
     return redirect("/login")
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
