@@ -41,6 +41,10 @@ def load_user(user_id):
 def index():
     return render_template("index.html")
 
+@app.route("/dashboard")
+def dashboard():
+    return render_template("dashboard.html")
+
 @app.route("/assets")
 def assets():
     return render_template("assets.html")
@@ -80,6 +84,7 @@ def register():
     if form.validate_on_submit():
         # check for duplicate usernames
         user = Users.query.filter_by(username=form.username.data).first()
+        # if no duplicates found, create new user and add to db
         if user is None:
             password_hash = generate_password_hash(form.password.data, method='sha256')
             user = Users(
