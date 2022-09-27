@@ -3,6 +3,38 @@
 Liabilities
 {% endblock %}
 {% block body %}
-liabilities.html
 
+<h1 class="py-2">Liabilities</h1>
+<p><em>"The simple definition of a liability is something that takes money out of your pocket."</em></p>
+<p><em>- Robert Kiyosaki </em></p>
+<br>
+<br>
+<h4>
+    Fill out the table below with all of your outgoings
+</h4>
+<br>
+
+
+<form action="" method="post">
+    <table class="table">
+        <thead>
+            <th colspan="3">Your Expenses</th>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense }}</td>
+                    <td>$ <input type="number"></td>
+                    <td>
+                        <select>
+                            {% for item in frequency %}
+                            <option>{{ item }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
 {% endblock %}
