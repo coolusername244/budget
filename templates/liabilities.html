@@ -16,7 +16,7 @@ Liabilities
 
 
 <form action="" method="post">
-    <table class="table table-dark">
+    <table class="table table-hover table-striped table-dark">
         <thead>
             <th colspan="3">Your Expenses</th>
             <th>Edit/Delete</th>
@@ -29,24 +29,34 @@ Liabilities
                     <td>
                         <select class="form-control">
                             {% for item in frequency %}
-                            <option>{{ item }}</option>
+                                <option>{{ item }}</option>
                             {% endfor %}
                         </select>
                     </td>
                     <td>
-                        <button class="btn btn-secondary">
-                            <i class="fa-regular fa-circle-check"></i>
-                        </button>
-                        <button class="btn btn-secondary">
+                        <a class="add btn btn-secondary">
+                            <i class="fa-solid fa-check"></i>
+                        </a>
+                        <a class="edit btn btn-secondary">
                             <i class="fa-regular fa-pen-to-square"></i>
-                        </button> 
-                        <button class="btn btn-secondary">
+                        </a>
+                        <button class="delete btn btn-secondary">
                             <i class="fa-regular fa-trash-can"></i>
                         </button>
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2">
+                    <a class="btn btn-secondary add-new">Add New Expense</a>
+                </td>
+                <td colspan="2">
+                    <a  class="btn btn-secondary">Save My Expenses</a>
+                </td>
+            </tr>
+        </tfoot>
     </table>
 </form>
 {% endblock %}
