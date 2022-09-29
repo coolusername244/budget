@@ -1,5 +1,7 @@
 import forms
+import itertools
 
+from database_models import Users, Expenses
 from flask import Flask, render_template, redirect, request, flash, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -17,13 +19,6 @@ app.config.from_pyfile("config.py")
 # initialise the database
 db = SQLAlchemy(app)
 
-# create user model for database
-class Users(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), nullable=False, unique=True)
-    password = db.Column(db.String(200), nullable=False)
-    data_added = db.Column(db.DateTime, default=datetime.utcnow)
-
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
@@ -31,7 +26,6 @@ login_manager.login_view = "login"
 @login_manager.user_loader
 def load_user(user_id):
     return Users.query.get(int(user_id))
-
 
 
 @app.route("/")
@@ -50,40 +44,60 @@ def assets():
 
 
 @app.route("/liabilities", methods=["GET", "POST"])
+@login_required
 def liabilities():
 
-    frequency = [
-        "Every Month",
-        "Every 3 Months",
-        "Every Week",
-        "Every 2 Weeks"
-    ]
+    if request.method == "POST":
 
-    expenses = [
-        "Mortgage/Rent",
-        "Electricity",
-        "Internet",
-        "Other Utilities",
-        "Car Payment",
-        "Fuel",
-        "Parking",
-        "Insurance",
-        "Car Tax",
-        "Credit Card 1",
-        "Credit Card 2",
-        "Loan 1",
-        "Loan 2",
-        "Student Loan",
-        "Netflix",
-        "Spotify",
-        "Gym"
-    ]
+        expenses = request.form.getlist("expense")
+        amounts = request.form.getlist("amount")
+        frequencies = request.form.getlist("frequency")
 
-    return render_template(
-        "liabilities.html", 
-        expenses=expenses,
-        frequency=frequency
-        )
+        for (expense, amount, frequency) in zip(expenses, amounts, frequencies):
+            user_id = current_user.id
+            user_expenses = Expenses(
+                user_id=user_id,
+                expense=expense,
+                amount=amount,
+                frequency=frequency
+            )
+            db.session.add(user_expenses)
+        db.session.commit()
+
+        return redirect("/")
+    else:
+        frequency = [
+            "Every Month",
+            "Every 3 Months",
+            "Every Week",
+            "Every 2 Weeks"
+        ]
+
+        expenses = [
+            "Mortgage/Rent",
+            "Electricity",
+            "Internet",
+            "Other Utilities",
+            "Car Payment",
+            "Fuel",
+            "Parking",
+            "Insurance",
+            "Car Tax",
+            "Credit Card 1",
+            "Credit Card 2",
+            "Loan 1",
+            "Loan 2",
+            "Student Loan",
+            "Netflix",
+            "Spotify",
+            "Gym"
+        ]
+
+        return render_template(
+            "liabilities.html", 
+            expenses=expenses,
+            frequency=frequency
+            )
 
 
 @app.route("/login", methods=["GET", "POST"])
