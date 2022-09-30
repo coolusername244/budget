@@ -22,30 +22,57 @@ Liabilities
             <th>Edit/Delete</th>
         </thead>
         <tbody>
-            {% for expense in expenses %}
-                <tr>
-                    <td><input type="text" name="expense" value="{{ expense }}"></td>
-                    <td>$ <input name="amount" type="number"></td>
-                    <td>
-                        <select name="frequency" class="form-control">
-                            {% for item in frequency %}
-                                <option>{{ item }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                        <a class="add btn btn-secondary">
-                            <i class="fa-solid fa-check"></i>
-                        </a>
-                        <a class="edit btn btn-secondary">
-                            <i class="fa-regular fa-pen-to-square"></i>
-                        </a>
-                        <button class="delete btn btn-secondary">
-                            <i class="fa-regular fa-trash-can"></i>
-                        </button>
-                    </td>
-                </tr>
-            {% endfor %}
+            {% if query|length == 0 %}
+                {% for expense in expenses %}
+                    <tr>
+                        <td><input type="text" name="expense" value="{{ expense }}"></td>
+                        <td>
+                            $ <input name="amount" type="number"></td>
+                        <td>
+                            <select name="frequency" class="form-control">
+                                {% for f in frequency %}
+                                    <option>{{ f }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <a class="add btn btn-secondary">
+                                <i class="fa-solid fa-check"></i>
+                            </a>
+                            <a class="edit btn btn-secondary">
+                                <i class="fa-regular fa-pen-to-square"></i>
+                            </a>
+                            <button class="delete btn btn-secondary">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                {% for expenses in query %}
+                    <tr>
+                        <td><input type="text" name="expense" value="{{ expenses.expense }}"></td>
+                        <td>
+                            $ <input name="amount" type="number" value="{{ '%0.2f' % expenses.amount|float }}"></td>
+                        <td>
+                            <select name="frequency" class="form-control">
+                                    <option>{{ expenses.frequency }}</option>
+                            </select>
+                        </td>
+                        <td>
+                            <a class="add btn btn-secondary">
+                                <i class="fa-solid fa-check"></i>
+                            </a>
+                            <a class="edit btn btn-secondary">
+                                <i class="fa-regular fa-pen-to-square"></i>
+                            </a>
+                            <button class="delete btn btn-secondary">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
         </tbody>
         <tfoot>
             <tr>

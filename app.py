@@ -1,7 +1,6 @@
 import forms
 import itertools
 
-from database_models import Users, Expenses
 from flask import Flask, render_template, redirect, request, flash, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -18,6 +17,22 @@ app.config.from_pyfile("config.py")
 
 # initialise the database
 db = SQLAlchemy(app)
+
+
+# create user model for database
+class Users(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), nullable=False, unique=True)
+    password = db.Column(db.String(200), nullable=False)
+    data_added = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Expenses(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey(Users.id), nullable=False)
+    expense = db.Column(db.String(100), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    frequency = db.Column(db.String(100), nullable=False)
+
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -47,12 +62,20 @@ def assets():
 @login_required
 def liabilities():
 
+    # send data to database on submit
     if request.method == "POST":
 
+        # select and delete all current records
+        id = current_user.id
+        Expenses.query.filter(Expenses.user_id == id).delete()
+        db.session.commit()
+
+        # get lists for each table column
         expenses = request.form.getlist("expense")
         amounts = request.form.getlist("amount")
         frequencies = request.form.getlist("frequency")
 
+        # add each to database and include user_id in each row
         for (expense, amount, frequency) in zip(expenses, amounts, frequencies):
             user_id = current_user.id
             user_expenses = Expenses(
@@ -62,18 +85,35 @@ def liabilities():
                 frequency=frequency
             )
             db.session.add(user_expenses)
+        
+        # save changes to database
         db.session.commit()
 
-        return redirect("/")
+        # return user to dashboard
+        return redirect("/dashboard")
+    
+    # if request method = Get
     else:
-        frequency = [
-            "Every Month",
-            "Every 3 Months",
-            "Every Week",
-            "Every 2 Weeks"
-        ]
 
-        expenses = [
+        # check databse to see if user has already inputted expenses
+        id = current_user.id
+        query = Expenses.query.filter(Expenses.user_id == id).all()
+
+        # if user has previous entries, return them to the HTML table
+        if len(query) != 0:
+            return render_template("liabilities.html", query=query)
+        
+        # if the user has no previous entries, display default
+        elif len(query) == 0:
+
+            frequency = [
+                "Every Month",
+                "Every 3 Months",
+                "Every Week",
+                "Every 2 Weeks"
+            ]
+
+            expenses = [
             "Mortgage/Rent",
             "Electricity",
             "Internet",
@@ -93,11 +133,11 @@ def liabilities():
             "Gym"
         ]
 
-        return render_template(
-            "liabilities.html", 
-            expenses=expenses,
-            frequency=frequency
-            )
+            return render_template(
+                "liabilities.html", 
+                expenses=expenses,
+                frequency=frequency
+                )
 
 
 @app.route("/login", methods=["GET", "POST"])
