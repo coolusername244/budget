@@ -1,43 +1,30 @@
 $(document).ready(function() {
-    let actions = $("table td:last-child").html();
 
     // Append table with add row form on add new button click
-    $(".add-new").click(function() {
-        $(this).attr("disabled", "disabled");
-        let index = $("table tbody tr:last-child").index();
-        let row = '<tr>' +
-            '<td><input name="expense" class="form-control" type="text"></td>' +
-            '<td>$ <input name="amount" type="number"></td>' +
-            '<td><select name="frequency" class="form-control"><option>Every Month</option><option>Every 3 Months</option><option>Every Week</option><option>Every 2 weeks</option></select></td>' +
-            '<td>' + actions + '</td>' +
-            '</tr>';
-        $("table").append(row);
-        $("table tbody tr").eq(index + 1).find(".add, .edit").toggle();
+    let deleteButton = '<td><i class="fa-regular fa-trash-can mx-1 delete"></i></td>'
+
+    let expenseRow = '<tr>' +
+        '<td><input name="expense" type="text" placeholder="Please Fill Out" required></td>' +
+        '<td><input name="amount" type="number" required></td>' + deleteButton + '</tr>';
+    
+    let savingsRow = '<tr>' +
+    '<td><input name="savings" type="text" placeholder="Please Fill Out" required></td>' +
+    '<td><input name="amount" type="number" required></td>' + deleteButton + '</tr>';
+
+    let incomeRow = '<tr>' +
+    '<td><input name="income" type="text" placeholder="Please Fill Out" required></td>' +
+    '<td><input name="amount" type="number" required></td>' + deleteButton + '</tr>';
+
+    $(".add-new-expense").click(function() {
+        $("table").append(expenseRow);
     });
 
-    // Add row on add button click
-    $(document).on("click", ".add", function() {
-        let empty = false;
-        let input = $(this).parents("tr").find('input[type="text"]');
-        input.each(function() {
-            if (!$(this).val()) {
-                $(this).attr("Placeholder", "Please fill out");
-            } 
-        });
-        $(this).parents("tr").find(".error").first().focus();
-        if (!empty) {
-            input.each(function() {
-                $(this).parent("td").html('<input name="expense" class="form-control" type="text" value= ' + $(this).val() + '></input>');
-            });
-            $(this).parents("tr").find(".add, .edit").toggle();
-        }
+    $(".add-new-saving").click(function() {
+        $("table").append(savingsRow);
     });
-    // Edit row on edit button click
-    $(document).on("click", ".edit", function(){
-        $(this).parents("tr").children(":first").each(function(){
-            $(this).html('<input type="text" class="form-control text-center" value="' + $(this).text() + '">');
-        });
-        $(this).parents("tr").find(".add, .edit").toggle();
+
+    $(".add-new-income").click(function() {
+        $("table").append(incomeRow);
     });
 
     // Delete row on delete button click
