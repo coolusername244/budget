@@ -2,10 +2,14 @@ body {
     background-color: #cfd1d4;
 }
 
-.add {
-    display: none;
+table {
+    overflow-x: auto;
+    max-height: 90vh;
+    max-width: 60vw;
+    margin-left: 20vw;
 }
 
-.table {
-    table-layout: fixed;
-}
+thead th {
+    position: sticky;
+    top: 0;
+  }
