@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block title %}
+Savings
+{% endblock %}
+{% block body %}
+
+<h1 class="py-2">Savings</h1>
+
+<br>
+<br>
+<h4>
+    Fill out the table below with all of your monthly savings
+</h4>
+<form class="my-3" action="/savings" method="post">
+    <table class="table table-striped table-dark">
+        <thead>
+            <tr>
+                <th>Savings</th>
+                <th>Amount Per Month</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if query|length == 0 %}
+                {% for saving in savings %}
+                    <tr>
+                        <td>
+                            <input type="text" name="savings" value="{{ saving }}">
+                        </td>
+                        <td>
+                            <input type="number" name="amount" required min="1">
+                        </td>
+                        <td>
+                            <i class="fa-regular fa-trash-can mx-1 delete"></i>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                {% for savings in query %}
+                    <tr>
+                        <td>
+                            <input type="text" name="savings" value="{{ savings.savings|title }}">
+                        </td>
+                        <td>
+                            <input name="amount" type="number" value="{{ '%0.2f' % savings.amount|float }}">
+                        </td>
+                        <td>
+                            <i class="fa-regular fa-trash-can mx-1 delete"></i>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2">
+                    <i class=" btn btn-secondary fa-solid fa-plus add-new-saving"></i>
+                </td>
+                <td colspan="1">
+                    <button class="btn btn-secondary my-1" type="submit">Submit Savings</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</form>
+{% endblock %}

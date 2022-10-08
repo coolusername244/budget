@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block title %}
+Outgoings
+{% endblock %}
+{% block body %}
+
+<h1 class="py-2">Outgoings</h1>
+<p><em>"The simple definition of a liability is something that takes money out of your pocket."</em></p>
+<p><em>- Robert Kiyosaki </em></p>
+<br>
+<br>
+<h4>
+    Fill out the table below with all of your monthly outgoings
+</h4>
+<form class="my-3" action="/outgoings" method="post">
+    <table class="table table-striped table-dark">
+        <thead>
+            <tr>
+                <th>Expenses</th>
+                <th>Amount Per Month</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if query|length == 0 %}
+                {% for expense in outgoings %}
+                    <tr>
+                        <td>
+                            <input type="text" name="expense" value="{{ expense }}">
+                        </td>
+                        <td>
+                            <input type="number" name="amount" required min="1">
+                        </td>
+                        <td>
+                            <i class="fa-regular fa-trash-can mx-1 delete"></i>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                {% for expenses in query %}
+                    <tr>
+                        <td>
+                            <input type="text" name="expense" value="{{ expenses.expense|title }}">
+                        </td>
+                        <td>
+                            <input name="amount" type="number" value="{{ '%0.2f' % expenses.amount|float }}">
+                        </td>
+                        <td>
+                            <i class="fa-regular fa-trash-can mx-1 delete"></i>
+                        </td>
+                    </tr>
+                {% endfor %}
+        {% endif %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2">
+                    <i class=" btn btn-secondary fa-solid fa-plus add-new-expense"></i>
+                </td>
+                <td colspan="1">
+                    <button class="btn btn-secondary my-1" type="submit">Submit Expenses</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</form>
+{% endblock %}
