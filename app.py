@@ -1,3 +1,4 @@
+from ast import NodeVisitor
 import forms
 import itertools
 
@@ -31,12 +32,24 @@ class Expenses(db.Model, UserMixin):
     user_id = db.Column(db.Integer, db.ForeignKey(Users.id), nullable=False)
     expense = db.Column(db.String(100), nullable=False)
     amount = db.Column(db.Float, nullable=False)
-    frequency = db.Column(db.String(100), nullable=False)
+
+class Income(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey(Users.id), nullable=False)
+    income = db.Column(db.String(100), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+
+class Savings(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey(Users.id), nullable=False)
+    savings = db.Column(db.String(100), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
 
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -49,95 +62,145 @@ def index():
 
 
 @app.route("/dashboard")
+@login_required
 def dashboard():
     return render_template("dashboard.html")
 
 
-@app.route("/assets")
-def assets():
-    return render_template("assets.html")
-
-
-@app.route("/liabilities", methods=["GET", "POST"])
+@app.route("/income", methods=["GET", "POST"])
 @login_required
-def liabilities():
+def income():
 
-    # send data to database on submit
-    if request.method == "POST":
-
-        # select and delete all current records
-        id = current_user.id
-        Expenses.query.filter(Expenses.user_id == id).delete()
-        db.session.commit()
-
-        # get lists for each table column
-        expenses = request.form.getlist("expense")
-        amounts = request.form.getlist("amount")
-        frequencies = request.form.getlist("frequency")
-
-        # add each to database and include user_id in each row
-        for (expense, amount, frequency) in zip(expenses, amounts, frequencies):
-            user_id = current_user.id
-            user_expenses = Expenses(
-                user_id=user_id,
-                expense=expense,
-                amount=amount,
-                frequency=frequency
-            )
-            db.session.add(user_expenses)
-        
-        # save changes to database
-        db.session.commit()
-
-        # return user to dashboard
-        return redirect("/dashboard")
-    
-    # if request method = Get
-    else:
-
-        # check databse to see if user has already inputted expenses
-        id = current_user.id
-        query = Expenses.query.filter(Expenses.user_id == id).all()
-
-        # if user has previous entries, return them to the HTML table
-        if len(query) != 0:
-            return render_template("liabilities.html", query=query)
-        
-        # if the user has no previous entries, display default
-        elif len(query) == 0:
-
-            frequency = [
-                "Every Month",
-                "Every 3 Months",
-                "Every Week",
-                "Every 2 Weeks"
-            ]
-
-            expenses = [
-            "Mortgage/Rent",
-            "Electricity",
-            "Internet",
-            "Other Utilities",
-            "Car Payment",
-            "Fuel",
-            "Parking",
-            "Insurance",
-            "Car Tax",
-            "Credit Card 1",
-            "Credit Card 2",
-            "Loan 1",
-            "Loan 2",
-            "Student Loan",
-            "Netflix",
-            "Spotify",
-            "Gym"
+    incomes = [
+        "Salary",
+        "Dividends",
+        "Rental Income",
+        "Capital Gains",
+        "Royalties"
         ]
 
-            return render_template(
-                "liabilities.html", 
-                expenses=expenses,
-                frequency=frequency
-                )
+    id = current_user.id 
+
+    if request.method == "POST":
+        # if user submits form, delete previous entries and 
+        # update with current entries
+        user_incomes = request.form.getlist("income")
+        amounts = request.form.getlist("amount")
+        Income.query.filter_by(user_id = id).delete()
+        db.session.commit()
+        if len(user_incomes) == 0:
+            return render_template("income.html", incomes=incomes)
+        for (income, amount) in zip(user_incomes, amounts):
+            user_income = Income(
+                user_id = id,
+                income = income,
+                amount = amount
+            )
+            db.session.add(user_income)
+            db.session.commit()
+        flash("Incomes Updated!")
+        return redirect("/")
+    else:
+        # check if user has already completed the form and return
+        # else provide default values
+        query = Income.query.filter_by(user_id = id).all()
+        if len(query) != 0:
+            return render_template("income.html", query=query)
+        else:
+            return render_template("income.html", incomes=incomes)
+
+
+@app.route("/outgoings", methods=["GET", "POST"])
+@login_required
+def outgoings():
+
+    outgoings = [
+                "Mortgage/Rent",
+                "Home Insurance",
+                "Car Payment",
+                "Car Insurance",
+                "Fuel",
+                "Credit Card 1",
+                "Credit Card 2",
+                "Loan 1",
+                "Loan 2",
+                "Student Loan",
+                "Netflix",
+                "Spotify"
+            ]
+
+    id = current_user.id 
+
+    if request.method == "POST":
+        # if user submits form, delete previous entries and 
+        # update with current entries
+        expenses = request.form.getlist("expense")
+        amounts = request.form.getlist("amount")
+        Expenses.query.filter_by(user_id = id).delete()
+        db.session.commit()
+        if len(expenses) == 0:
+            return render_template("outgoings.html", outgoings=outgoings)
+        for (expense, amount) in zip(expenses, amounts):
+            user_expense = Expenses(
+                user_id = id,
+                expense = expense,
+                amount = amount
+            )
+            db.session.add(user_expense)
+            db.session.commit()
+        flash("Outgoings Updated!")
+        return redirect("/")
+    else:
+        # check if user has already completed the form and return
+        # else provide default values
+        query = Expenses.query.filter_by(user_id = id).all()
+        if len(query) != 0:
+            return render_template("outgoings.html", query=query)
+        else:
+            return render_template("outgoings.html", outgoings=outgoings)
+
+
+@app.route("/savings", methods=["GET", "POST"])
+@login_required
+def savings():
+
+    savings = [
+            "Emergency Fund",
+            "Stock Portfolio",
+            "Retirement Fund",
+            "Commodites",
+            "Other",
+        ]
+
+    id = current_user.id 
+
+    if request.method == "POST":
+        # if user submits form, delete previous entries and 
+        # update with current entries
+        user_savings = request.form.getlist("savings")
+        amounts = request.form.getlist("amount")
+        Savings.query.filter_by(user_id = id).delete()
+        db.session.commit()
+        if len(user_savings) == 0:
+            return render_template("savings.html", savings=savings)
+        for (saving, amount) in zip(user_savings, amounts):
+            user_savings = Savings(
+                user_id = id,
+                savings = saving,
+                amount = amount
+            )
+            db.session.add(user_savings)
+            db.session.commit()
+        flash("Savings Updated!")
+        return redirect("/")
+    else:
+        # check if user has already completed the form and return
+        # else provide default values
+        query = Savings.query.filter_by(user_id = id).all()
+        if len(query) != 0:
+            return render_template("savings.html", query=query)
+        else:
+            return render_template("savings.html", savings=savings)
 
 
 @app.route("/login", methods=["GET", "POST"])
