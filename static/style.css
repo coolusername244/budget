@@ -4,12 +4,22 @@ body {
 
 table {
     overflow-x: auto;
+    overflow-y: scroll;
     max-height: 90vh;
     max-width: 60vw;
-    margin-left: 20vw;
+    margin: auto;
 }
 
 thead th {
     position: sticky;
     top: 0;
   }
+
+.container {
+    padding: 1rem;
+    min-height: 90vh;
+}
+
+.dashboard {
+    margin: auto;
+}

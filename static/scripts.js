@@ -31,4 +31,38 @@ $(document).ready(function() {
     $(document).on("click", ".delete", function() {
         $(this).parents("tr").remove();
     });
+
+
+    let outgoingData = $('#outgoing-data').html();
+    let savingsData = $('#saving-data').html();
+    let remainingData = $('#remaining-data').html();
+
+    const data = {
+        labels: [
+          'Outgoings',
+          'Savings',
+          'Remaining Cash'
+        ],
+        datasets: [{
+          label: 'My First Dataset',
+          data: [outgoingData, savingsData, remainingData],
+          backgroundColor: [
+            'rgba(255, 00, 00, 0.2)',
+            'rgba(00, 255, 00, 0.2)',
+            'rgba(00, 00, 255, 0.2)'
+          ],
+          hoverOffset: 10
+        }]
+      };
+  
+
+    const config = {
+    type: 'doughnut',
+    data: data,
+    };
+
+    const myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+    );
 });

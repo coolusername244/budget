@@ -1,10 +1,10 @@
-from ast import NodeVisitor
 import forms
 import itertools
 
 from flask import Flask, render_template, redirect, request, flash, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
 from datetime import datetime
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 
@@ -64,7 +64,33 @@ def index():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    
+    id = current_user.id 
+    income = 0
+    outgoings = 0
+    savings = 0
+
+    query = Income.query.filter_by(user_id = id).all()
+    for row in query:
+        income += row.amount
+
+    query = Expenses.query.filter_by(user_id = id).all()
+    for row in query:
+        outgoings += row.amount
+
+    query = Savings.query.filter_by(user_id = id).all()
+    for row in query:
+        savings += row.amount
+
+    remaining = income - outgoings - savings
+
+
+    return render_template(
+        "dashboard.html",
+        income=income,
+        savings=savings,
+        outgoings=outgoings,
+        remaining=remaining)
 
 
 @app.route("/income", methods=["GET", "POST"])
@@ -99,7 +125,7 @@ def income():
             db.session.add(user_income)
             db.session.commit()
         flash("Incomes Updated!")
-        return redirect("/")
+        return redirect("/dashboard")
     else:
         # check if user has already completed the form and return
         # else provide default values
@@ -149,7 +175,7 @@ def outgoings():
             db.session.add(user_expense)
             db.session.commit()
         flash("Outgoings Updated!")
-        return redirect("/")
+        return redirect("/dashboard")
     else:
         # check if user has already completed the form and return
         # else provide default values
@@ -192,7 +218,7 @@ def savings():
             db.session.add(user_savings)
             db.session.commit()
         flash("Savings Updated!")
-        return redirect("/")
+        return redirect("/dashboard")
     else:
         # check if user has already completed the form and return
         # else provide default values

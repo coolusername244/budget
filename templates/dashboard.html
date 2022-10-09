@@ -3,6 +3,27 @@
     Dashboard
 {% endblock %}
 {% block body %}
-
-dashboard.html
+<div class="row ">
+    <div class="col-lg-6 col-sm-12 dashboard">
+        <div class="card bg-dark text-white">
+            <h5 class="card-header">Your Monthly Summary</h5>
+            <div class="card-body">
+                <h5 class="card-title"><i class="fa-solid fa-arrow-trend-up"></i> Income:</h5>
+                <p class="card-text">{{ '%0.2f' % income|float  }}</p>
+                <hr>
+                <h5 class="card-title"><i class="fa-solid fa-arrow-trend-down"></i> Outgoings:</h5>
+                <p class="card-text" id="outgoing-data">{{ '%0.2f' % outgoings|float  }}</p>
+                <hr>
+                <h5 class="card-title"><i class="fa-solid fa-piggy-bank"></i> Savings:</h5>
+                <p class="card-text" id="saving-data">{{ '%0.2f' % savings|float  }}</p>
+                <hr>
+                <h5 class="card-title"><i class="fa-solid fa-money-bill-1-wave"></i> Remaining Cash Balance:</h5>
+                <p class="card-text" id="remaining-data">{{ '%0.2f' % remaining|float  }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-sm-12 dashboard">
+        <canvas id="myChart"></canvas>
+    </div>
+</div>
 {% endblock %}
