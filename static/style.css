@@ -1,9 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+
+html {
+    height: 100%;
+}
+
 body {
+    font-family: 'Nunito', sans-serif;
     background-color: #cfd1d4;
 }
 
 table {
-    overflow-x: auto;
     overflow-y: scroll;
     max-height: 90vh;
     max-width: 60vw;
@@ -17,9 +23,16 @@ thead th {
 
 .container {
     padding: 1rem;
-    min-height: 90vh;
+    height: 90vh;
+
 }
 
 .dashboard {
     margin: auto;
 }
+
+.dashboard-empty {
+    margin: auto;
+    width: 80%;
+}
+
