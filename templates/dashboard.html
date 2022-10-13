@@ -4,26 +4,41 @@
 {% endblock %}
 {% block body %}
 <div class="row ">
+    {% if (income != 0) and (outgoings != 0) %}
     <div class="col-lg-6 col-sm-12 dashboard">
         <div class="card bg-dark text-white">
             <h5 class="card-header">Your Monthly Summary</h5>
             <div class="card-body">
                 <h5 class="card-title"><i class="fa-solid fa-arrow-trend-up"></i> Income:</h5>
-                <p class="card-text">{{ '%0.2f' % income|float  }}</p>
+                <p class="card-text">{{ "{:,.2f}".format(income)  }}</p>
                 <hr>
                 <h5 class="card-title"><i class="fa-solid fa-arrow-trend-down"></i> Outgoings:</h5>
-                <p class="card-text" id="outgoing-data">{{ '%0.2f' % outgoings|float  }}</p>
+                <p class="card-text" id="outgoing-data">{{ "{:,.2f}".format(outgoings)  }}</p>
                 <hr>
                 <h5 class="card-title"><i class="fa-solid fa-piggy-bank"></i> Savings:</h5>
-                <p class="card-text" id="saving-data">{{ '%0.2f' % savings|float  }}</p>
+                <p class="card-text" id="saving-data">{{ "{:,.2f}".format(savings) }}</p>
                 <hr>
                 <h5 class="card-title"><i class="fa-solid fa-money-bill-1-wave"></i> Remaining Cash Balance:</h5>
-                <p class="card-text" id="remaining-data">{{ '%0.2f' % remaining|float  }}</p>
+                <p class="card-text" id="remaining-data">{{ "{:,.2f}".format(remaining)  }}</p>
             </div>
         </div>
     </div>
     <div class="col-lg-6 col-sm-12 dashboard">
         <canvas id="myChart"></canvas>
     </div>
+    {% else %}
+    <div class="col-12 dashboard-empty">
+        <div class="card bg-dark text-white">
+            <h5 class="card-header">Your Monthly Summary:</h5>
+                <div class="card-body">
+                <p class="card-text">It appears that you havent yet provided any or enough data for us to work with!</p>
+                <p class="card-text">Please fill out at least your income and outgoings</p>
+                <p class="card-text">To get started, click below!</p>
+                <a href="/income" class="btn btn-secondary">Income</a>
+                <a href="/outgoings" class="btn btn-secondary">Outgoings</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}
