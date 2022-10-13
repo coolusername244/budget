@@ -33,9 +33,9 @@ $(document).ready(function() {
     });
 
 
-    let outgoingData = $('#outgoing-data').html();
-    let savingsData = $('#saving-data').html();
-    let remainingData = $('#remaining-data').html();
+    let outgoingData = $('#outgoing-data').html().replace(',', '');
+    let savingsData = $('#saving-data').html().replace(',', '');;
+    let remainingData = $('#remaining-data').html().replace(',', '');;
 
     const data = {
         labels: [
