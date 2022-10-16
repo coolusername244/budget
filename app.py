@@ -1,10 +1,10 @@
+import os
 import forms
 import itertools
 
 from flask import Flask, render_template, redirect, request, flash, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.sql import func
 from datetime import datetime
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 
@@ -13,8 +13,9 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, log
 # create flask app
 app = Flask(__name__)
 
-# custom config file
-app.config.from_pyfile("config.py")
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///budget.db"
+
+app.config["SECRET_KEY"] = os.urandom(24)
 
 # initialise the database
 db = SQLAlchemy(app)
@@ -25,7 +26,7 @@ class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String(200), nullable=False)
-    data_added = db.Column(db.DateTime, default=datetime.utcnow)
+    data_added = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
 class Expenses(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -276,5 +277,5 @@ def register():
             return render_template("register.html", form=form)
         login_user(user)
         flash(f"{user.username} has been registered succesfully!")
-        return redirect("/")
+        return redirect("/dashboard")
     return render_template("register.html", form=form)
