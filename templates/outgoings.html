@@ -26,7 +26,7 @@ Outgoings
                 {% for expense in outgoings %}
                     <tr>
                         <td>
-                            <input type="text" name="expense" value="{{ expense }}">
+                            <input type="text" name="expense" value="{{ expense }}" required>
                         </td>
                         <td>
                             <input type="number" name="amount" required min="1">
@@ -40,10 +40,10 @@ Outgoings
                 {% for expenses in query %}
                     <tr>
                         <td>
-                            <input type="text" name="expense" value="{{ expenses.expense|title }}">
+                            <input type="text" name="expense" value="{{ expenses.expense|title }}" required>
                         </td>
                         <td>
-                            <input name="amount" type="number" value="{{ '%0.2f' % expenses.amount|float }}">
+                            <input name="amount" type="number" value="{{ '%0.2f' % expenses.amount|float }}" required>
                         </td>
                         <td>
                             <i class="fa-regular fa-trash-can mx-1 delete"></i>

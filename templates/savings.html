@@ -25,7 +25,7 @@ Savings
                 {% for saving in savings %}
                     <tr>
                         <td>
-                            <input type="text" name="savings" value="{{ saving }}">
+                            <input type="text" name="savings" value="{{ saving }}" required>
                         </td>
                         <td>
                             <input type="number" name="amount" required min="1">
@@ -39,10 +39,10 @@ Savings
                 {% for savings in query %}
                     <tr>
                         <td>
-                            <input type="text" name="savings" value="{{ savings.savings|title }}">
+                            <input type="text" name="savings" value="{{ savings.savings|title }}" required>
                         </td>
                         <td>
-                            <input name="amount" type="number" value="{{ '%0.2f' % savings.amount|float }}">
+                            <input name="amount" type="number" value="{{ '%0.2f' % savings.amount|float }}" required>
                         </td>
                         <td>
                             <i class="fa-regular fa-trash-can mx-1 delete"></i>

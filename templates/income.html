@@ -25,7 +25,7 @@ Income
                 {% for income in incomes %}
                     <tr>
                         <td>
-                            <input type="text" name="income" value="{{ income }}">
+                            <input type="text" name="income" value="{{ income }}" required>
                         </td>
                         <td>
                             <input type="number" name="amount" required min="1">
