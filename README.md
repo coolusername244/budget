@@ -1,7 +1,7 @@
 # Monthly Budgeting Planner
 ---
 
-### Video Demo: URL will go here once recorded
+### Video Demo: https://youtu.be/SJPYvKslQmQ
 ---
 ### Description of webapp:
 
